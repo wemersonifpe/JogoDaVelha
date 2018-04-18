@@ -82,25 +82,10 @@ function tabuleiro:verificarEmpate()
 	return true
 end
 
-function tabuleiro:valida(linha,coluna)
-	if type(linha) == "number" and type(coluna) == "number" then
-		return true
-	end
-	return false
-end
-
-function tabuleiro:realizarJogada(linha,coluna,jogada)
-	if tabuleiro:valida(linha,coluna) then
-		local jogadaValida=((linha>=1 and linha<=3) and (coluna>=1 and coluna<=3)) and (tabuleiro.tab[linha][coluna] == " ")
-		if jogadaValida then
-			tabuleiro.tab[linha][coluna] = jogada
-			return true
-		end
-		return false
-	end
-	return false
-end
 
 return tabuleiro
+
+
+
 
 
