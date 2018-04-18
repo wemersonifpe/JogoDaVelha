@@ -13,8 +13,10 @@ function jogo:novojogo()
 	novoj.tabuleiro = tabuleiro:mostrarTabuleiro()
 	novoj.jogador1 = jogador:definirJogadores()
 	novoj.jogador1.jogada = "O"
+	novoj.jogador1.pontos = 0
 	novoj.jogador2 = jogador:definirJogadores()
 	novoj.jogador2.jogada = "X"
+	novoj.jogador2.pontos = 0
 	novoj.jogadordaVez = jogador:definirJogadores()
 	novoj.jogadordaVez.jogada = "O"
 
@@ -31,13 +33,62 @@ function jogo:vez()
 	end
 end
 
-function jogo:reiniciar()
-	print("Se deseja jogar novamente, digite 1:")
-	local reinicia = io.read('*number')
-	if reinicia == 1 then
-		tabuleiro:zerarTabuleiro()
-		jogo:iniciar()
+function jogo:verificarValor(linha,coluna)
+	if linha ~= nil and coluna ~= nil then
+		local jogadaValida=((linha>=1 and linha<=3) and (coluna>=1 and coluna<=3)) and (tabuleiro.tab[linha][coluna] == " ")
+		if jogadaValida then
+			return true
+		end
 	end
+	return false
+end
+
+
+function jogo:realizarJogada(linha,coluna,jogada)
+	if jogo:verificarValor(linha,coluna) then
+		tabuleiro.tab[linha][coluna] = jogada
+		return true
+	end
+	return false
+
+end
+
+function jogo:quemGanhou()
+	if tabuleiro:verificarLinha() == true then
+		print("ParabÃ©ns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
+		print()
+		jogo:pontuacao()
+		print("Obrigado Por Jogar".."\n")
+		return true
+	elseif tabuleiro:verificarColuna() == true then
+		print("ParabÃ©ns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
+		print()
+		jogo:pontuacao()
+		print("Obrigado Por Jogar".."\n")
+		return true
+	elseif tabuleiro:vericarDiagonais() == true then
+		print("ParabÃ©ns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
+		print()
+		jogo:pontuacao()
+		print("Obrigado Por Jogar".."\n")
+		return true
+	elseif tabuleiro:verificarEmpate() == true then
+		print("------------------O Jogo deu empate----------------------")
+		print()
+		return true
+	else
+		return false
+	end
+end
+
+function jogo:pontuacao()
+	if novoj.jogadordaVez.jogada == "X" then
+		novoj.jogador2.pontos = novoj.jogador2.pontos+1
+	else
+		novoj.jogador1.pontos = novoj.jogador1.pontos+1
+	end
+	print("Jogador "..novoj.jogador2.jogada.." pontuacao: "..novoj.jogador2.pontos)
+	print("Jogador "..novoj.jogador1.jogada.." pontuacao: "..novoj.jogador1.pontos.."\n")
 end
 
 function jogo:iniciar()
@@ -46,55 +97,40 @@ function jogo:iniciar()
 		print()
         print(tabuleiro.mostrarTabuleiro())
 
-		cont =0
+		fim = true
 
-
-
-	repeat
-
-	fim = false
+	while fim do
 
 		print("Sua Vez Jogador: " .. novoj.jogadordaVez.jogada)
 		print("Linha")
-		local linha = io.read("*number")
+		local linha = io.read()
 		print("Coluna")
-		local coluna = io.read("*number")
+		local coluna = io.read()
+		coluna = tonumber(coluna)
+		linha = tonumber(linha)
 		print()
-		if tabuleiro:realizarJogada(linha, coluna, novoj.jogadordaVez.jogada) then
+		if jogo:realizarJogada(linha, coluna, novoj.jogadordaVez.jogada) then
 			print(tabuleiro:mostrarTabuleiro())
 			print()
-			if tabuleiro:verificarLinha() == true then
-				print("Parabéns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
-				print()
-				print("Obrigado Por Jogar")
-				print(jogo:reiniciar())
-				fim = true
-			elseif tabuleiro:verificarColuna() == true then
-				print("Parabéns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
-				print()
-				print("Obrigado Por Jogar")
-				print(jogo:reiniciar())
-				fim = true
-			elseif tabuleiro:vericarDiagonais() == true then
-				print("Parabéns Jogador " .. novoj.jogadordaVez.jogada .. " Voce Ganhou")
-				print()
-				print("Obrigado Por Jogar")
-				print(jogo:reiniciar())
-				fim = true
-			elseif tabuleiro:verificarEmpate() == true then
-				print("------------------O Jogo deu empate----------------------")
-				print()
-				print(jogo:reiniciar())
-				fim = true
+			if jogo:quemGanhou() then
+				print("Se deseja jogar novamente?".."\n SIM digite 1: ".."\n NÃƒO digite 0: ")
+				local reinicia = io.read()
+				reinicia = tonumber(reinicia)
+				if reinicia == 1 then
+					tabuleiro:zerarTabuleiro()
+					jogo:iniciar()
+				elseif reiniciar == 0 then
+					break
+				end
+				fim = false
 			else
 				novoj:vez()
 			end
 		else
-			print("A posição digitada não é valida")
+			print("A posiÃ§Ã£o digitada nÃ£o Ã© valida")
 		end
-		cont = cont + 1
 
-	until (fim)
+	end
 end
 
 --return jogo
