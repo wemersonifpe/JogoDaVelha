@@ -1,4 +1,4 @@
-local jogador = {jogada}
+local jogador = {}
 
 function jogador:definirJogadores()
 
@@ -6,9 +6,7 @@ function jogador:definirJogadores()
 
 	novoJogador = setmetatable(novoJogador,{_index = jogador})
 
-	novoJogador.jogada = ""
-
 	return novoJogador
 end
---jogador.definirJogadores()
+
 return jogador
